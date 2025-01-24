@@ -1,0 +1,7 @@
+development:
+  adapter: sqlite3
+  database: library.db
+
+production:
+  adapter: sqlite3
+  database: library.db

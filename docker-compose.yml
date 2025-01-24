@@ -1,0 +1,8 @@
+services:
+  backend:
+    build:
+      context: ./
+    ports:
+      - 4567:4567
+    volumes:
+      - ./:/app
