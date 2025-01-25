@@ -7,6 +7,10 @@ require "./models"
 
 MEDIA_DIR = "./media/music"
 
+before do
+  response.headers["Access-Control-Allow-Origin"] = "*"
+end
+
 post "/upload" do
   unless params[:file]
     halt 400, "Invalid file upload"
@@ -26,10 +30,32 @@ post "/upload" do
 
   metadata = extract_metadata(original_path, upload_id)
 
+  create_or_update_metadata(metadata, upload_id)
+
   convert_to_hls(original_path, upload_id)
 
   content_type :json
   { upload_id: upload_id }.to_json
+end
+
+get "/library" do
+  content_type :json
+  Track.includes(:artist, :album).all.to_json(include: { artist: {}, album: {} })
+end
+
+get "/artists" do
+  content_type :json
+  Artist.includes(:tracks).all.to_json(include: { tracks: {} })
+end
+
+get "/albums" do
+  content_type :json
+  Album.includes(:tracks).all.to_json(include: { tracks: {} })
+end
+
+get "/stream/:upload_id/:file_name" do
+  content_type "application/x-mpegURL"
+  File.read(File.join(MEDIA_DIR, "#{params[:upload_id]}", params[:file_name]))
 end
 
 def extract_metadata(file_path, upload_id)
@@ -39,12 +65,12 @@ def extract_metadata(file_path, upload_id)
     properties = fileref.audio_properties
 
     metadata = {
-      title: tag.title,
-      artist: tag.artist,
-      album: tag.album,
-      year: tag.year,
-      track: tag.track,
-      bitrate: properties.bitrate,
+      title: tag.title || File.basename(file_path, File.extname(file_path)),
+      artist: tag.artist || "Unknown Artist",
+      album: tag.album || "Unknown Album",
+      year: tag.year || nil,
+      track: tag.track || nil,
+      bitrate: properties.bitrate || nil,
     }
   end
 
@@ -66,4 +92,42 @@ def convert_to_hls(file_path, upload_id)
                                          custom: %w(-f hls -hls_time 10 -hls_list_size 0))
 rescue => e
   puts "HLS conversion error: #{e.message}"
+end
+
+def create_or_update_metadata(metadata, track_id)
+  begin
+    ActiveRecord::Base.transaction do
+      artist = Artist.where(
+        name: metadata[:artist],
+      ).first
+
+      if !artist
+        artist = Artist.create(id: SecureRandom.uuid(), name: metadata[:artist])
+      end
+
+      album = Album.where(
+        title: metadata[:album],
+      ).first
+
+      if !album
+        album = Album.create(
+          id: SecureRandom.uuid(),
+          title: metadata[:album],
+          year: metadata[:year],
+          track_count: metadata[:track],
+          artist: artist,
+        )
+      end
+
+      Track.create(
+        id: track_id,
+        title: metadata[:title],
+        bitrate: metadata[:bitrate],
+        album: album,
+        artist: artist,
+      )
+    end
+  end
+rescue ActiveRecord::RecordInvalid => e
+  puts "Database save error: #{e.message}"
 end

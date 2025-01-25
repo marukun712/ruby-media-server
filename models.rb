@@ -1,16 +1,16 @@
-require "activerecord"
+require "sinatra/activerecord"
 
-class Album < ApplicationRecord
+class Album < ActiveRecord::Base
   belongs_to :artist
-  has_many :music
+  has_many :tracks
 end
 
-class Artist < ApplicationRecord
+class Artist < ActiveRecord::Base
   has_many :albums
-  has_many :music
+  has_many :tracks
 end
 
-class Music < ApplicationRecord
+class Track < ActiveRecord::Base
   belongs_to :album
   belongs_to :artist
 end

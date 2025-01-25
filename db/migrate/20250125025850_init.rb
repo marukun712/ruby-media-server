@@ -1,20 +1,24 @@
 class Init < ActiveRecord::Migration[7.1]
   def change
-    create_table :music, id: :uuid do |t|
-      t.text :title, null: false
-      t.integer :bitrate
-      t.references :album, null: false, foreign_key: true
-      t.references :artist, null: false, foreign_key: true
+    create_table :artists, id: :uuid do |t|
+      t.text :name, null: false
     end
 
-    create_table :album, id: :uuid do |t|
+    create_table :albums, id: :uuid do |t|
       t.text :title, null: false
       t.integer :year
       t.integer :track_count
+      t.text :cover_url
+      t.references :artist, null: false, foreign_key: true, type: :uuid
     end
 
-    create_table :artist, id: :uuid do |t|
-      t.text :name, null: false
+    create_table :tracks, id: :uuid do |t|
+      t.text :title, null: false
+      t.integer :bitrate
+      t.references :album, null: false, foreign_key: true, type: :uuid
+      t.references :artist, null: false, foreign_key: true, type: :uuid
     end
+    add_index :artists, [:name], unique: true
+    add_index :albums, [:title], unique: true
   end
 end

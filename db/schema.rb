@@ -11,15 +11,16 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema[7.1].define(version: 2025_01_25_025850) do
-# Could not dump table "album" because of following StandardError
+# Could not dump table "albums" because of following StandardError
 #   Unknown type 'uuid' for column 'id'
 
-# Could not dump table "artist" because of following StandardError
+# Could not dump table "artists" because of following StandardError
 #   Unknown type 'uuid' for column 'id'
 
-# Could not dump table "music" because of following StandardError
+# Could not dump table "tracks" because of following StandardError
 #   Unknown type 'uuid' for column 'id'
 
-  add_foreign_key "music", "albums"
-  add_foreign_key "music", "artists"
+  add_foreign_key "albums", "artists"
+  add_foreign_key "tracks", "albums"
+  add_foreign_key "tracks", "artists"
 end
