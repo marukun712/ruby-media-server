@@ -1,6 +1,8 @@
 type Artist = {
   id: string;
   name: string;
+  albums: Album[];
+  tracks: Track[];
 };
 
 type Album = {
@@ -10,6 +12,8 @@ type Album = {
   track_count?: number;
   cover_url?: string;
   artist_id: string;
+  tracks: Track[];
+  artist: Artist;
 };
 
 type Track = {

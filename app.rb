@@ -4,6 +4,8 @@ require "fileutils"
 require "streamio-ffmpeg"
 require "securerandom"
 require "./models"
+require "httparty"
+require "json"
 
 MEDIA_DIR = "./media/music"
 
@@ -40,17 +42,32 @@ end
 
 get "/library" do
   content_type :json
-  Track.includes(:artist, :album).all.to_json(include: { artist: {}, album: {} })
+  Album.includes(:tracks, :artist).all.to_json(include: { tracks: {}, artist: {} })
 end
 
-get "/artists" do
+post "/track/delete/:id" do
   content_type :json
-  Artist.includes(:tracks).all.to_json(include: { tracks: {} })
+  Track.find(params[:id]).destroy
 end
 
-get "/albums" do
+post "/album/delete/:id" do
   content_type :json
-  Album.includes(:tracks).all.to_json(include: { tracks: {} })
+  Album.find(params[:id]).destroy
+end
+
+post "/artist/delete/:id" do
+  content_type :json
+  Artist.find(params[:id]).destroy
+end
+
+get "/artist/:id" do
+  content_type :json
+  Artist.includes(:albums).find_by(id: params[:id]).to_json(include: { albums: {} })
+end
+
+get "/album/:id" do
+  content_type :json
+  Album.includes(:tracks, :artist).find_by(id: params[:id]).to_json(include: { tracks: {}, artist: {} })
 end
 
 get "/stream/:upload_id/:file_name" do
@@ -97,21 +114,30 @@ end
 def create_or_update_metadata(metadata, track_id)
   begin
     ActiveRecord::Base.transaction do
-      artist = Artist.where(
+      artist = Artist.find_by(
         name: metadata[:artist],
-      ).first
+      )
 
       if !artist
         artist = Artist.create(id: SecureRandom.uuid(), name: metadata[:artist])
+      else
+        artist.update(name: metadata[:artist])
       end
 
-      album = Album.where(
+      album = Album.find_by(
         title: metadata[:album],
-      ).first
+      )
 
       if !album
         album = Album.create(
           id: SecureRandom.uuid(),
+          title: metadata[:album],
+          year: metadata[:year],
+          track_count: metadata[:track],
+          artist: artist,
+        )
+      else
+        album.update(
           title: metadata[:album],
           year: metadata[:year],
           track_count: metadata[:track],
