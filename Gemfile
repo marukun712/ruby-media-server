@@ -1,13 +1,13 @@
 source "https://rubygems.org"
 
-gem 'sinatra'
-gem 'sinatra-contrib'
-gem 'activerecord'
-gem 'sinatra-activerecord'
-gem 'sqlite3'
-gem 'rackup'
-gem 'rake'
-gem 'puma'
-gem 'streamio-ffmpeg'
-gem 'taglib'
-gem 'securerandom'
+gem "sinatra"
+gem "sinatra-contrib"
+gem "activerecord"
+gem "sinatra-activerecord"
+gem "sqlite3", "~> 1.4.4"
+gem "rackup"
+gem "rake"
+gem "puma"
+gem "streamio-ffmpeg", "~> 3.0.2"
+gem "taglib-ruby", "~> 1.1.0"
+gem "securerandom", "~> 0.2.0"

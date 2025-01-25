@@ -1,2 +1,4 @@
 .env
 media/
+library.db-shm
+library.db-wal
