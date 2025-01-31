@@ -2,12 +2,12 @@ require "sinatra/activerecord"
 
 class Album < ActiveRecord::Base
   belongs_to :artist
-  has_many :tracks
+  has_many :tracks, dependent: :destroy
 end
 
 class Artist < ActiveRecord::Base
-  has_many :albums
-  has_many :tracks
+  has_many :albums, dependent: :destroy
+  has_many :tracks, dependent: :destroy
 end
 
 class Track < ActiveRecord::Base

@@ -1,6 +1,6 @@
 import type { ActionFunction, MetaFunction } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
-import Player from "~/components/player/player";
+import Player from "~/features/player/player";
 
 export const meta: MetaFunction = () => {
   return [

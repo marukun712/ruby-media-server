@@ -45,21 +45,6 @@ get "/library" do
   Album.includes(:tracks, :artist).all.to_json(include: { tracks: {}, artist: {} })
 end
 
-post "/track/delete/:id" do
-  content_type :json
-  Track.find(params[:id]).destroy
-end
-
-post "/album/delete/:id" do
-  content_type :json
-  Album.find(params[:id]).destroy
-end
-
-post "/artist/delete/:id" do
-  content_type :json
-  Artist.find(params[:id]).destroy
-end
-
 get "/artist/:id" do
   content_type :json
   Artist.includes(:albums).find_by(id: params[:id]).to_json(include: { albums: {} })
@@ -73,6 +58,35 @@ end
 get "/stream/:upload_id/:file_name" do
   content_type "application/x-mpegURL"
   File.read(File.join(MEDIA_DIR, "#{params[:upload_id]}", params[:file_name]))
+end
+
+post "/track/delete/:id" do
+  content_type :json
+  Track.find(params[:id]).destroy
+end
+
+post "/artist/delete/:id" do
+  content_type :json
+  Artist.find(params[:id]).destroy
+end
+
+post "/artist/edit/:id" do
+  content_type :json
+  artist = Artist.find(params[:id])
+  artist.update(name: params[:name])
+  artist.to_json
+end
+
+post "/album/delete/:id" do
+  content_type :json
+  Album.find(params[:id]).destroy
+end
+
+post "/album/edit/:id" do
+  content_type :json
+  album = Album.find(params[:id])
+  album.update(title: params[:title], year: params[:year], cover_url: params[:cover_url], track_count: params[:track_count])
+  album.to_json
 end
 
 def extract_metadata(file_path, upload_id)

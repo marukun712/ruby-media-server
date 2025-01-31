@@ -41,11 +41,20 @@ export default function Home() {
         {library.map((album: Album) => {
           return (
             <Card className="border-gray-700 w-62 m-6" key={album.id}>
-              <CardHeader>
-                <a href={`/client/album/${album.id}`}>
+              <a href={`/client/album/${album.id}`}>
+                <img
+                  src={
+                    album.cover_url ||
+                    "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj7QEZuxLo_zvFCMKLbMyH5pFU-LihRIeLXMY-QHxEMIgeNOVhvKeSMiNsIxrzNFHMsUv0nxYYl_b5RVqLtJcRgJokPMn8IVpkRDKfnrMr1dsoghyXHGXRakLCV1wX0FBGlltS5W34zMGV4/s400/no_image_square.jpg"
+                  }
+                  alt="thumbnail"
+                  className="p-6"
+                ></img>
+                <CardHeader>
                   <CardTitle className="text-2xl">{album.title}</CardTitle>
-                </a>
-              </CardHeader>
+                </CardHeader>
+              </a>
+
               <a href={`/client/artist/${album.artist_id}`}>
                 <CardContent>{album.artist.name}</CardContent>
               </a>
