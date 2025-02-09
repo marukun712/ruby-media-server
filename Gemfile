@@ -12,3 +12,4 @@ gem "streamio-ffmpeg", "~> 3.0.2"
 gem "taglib-ruby", "~> 1.1.0"
 gem "securerandom", "~> 0.2.0"
 gem "httparty"
+gem 'rack-cors'

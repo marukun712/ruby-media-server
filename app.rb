@@ -6,12 +6,9 @@ require "securerandom"
 require "./models"
 require "httparty"
 require "json"
+require "uri"
 
 MEDIA_DIR = "./media/music"
-
-before do
-  response.headers["Access-Control-Allow-Origin"] = "*"
-end
 
 post "/upload" do
   unless params[:file]
@@ -138,6 +135,11 @@ def create_or_update_metadata(metadata, track_id)
         artist.update(name: metadata[:artist])
       end
 
+      search = MusicBrainzSearch.new
+      result = search.search_album(metadata[:album], metadata[:artist]).first
+
+      url = "http://coverartarchive.org/release-group/#{result[:mbid]}/front"
+
       album = Album.find_by(
         title: metadata[:album],
       )
@@ -149,6 +151,7 @@ def create_or_update_metadata(metadata, track_id)
           year: metadata[:year],
           track_count: metadata[:track],
           artist: artist,
+          cover_url: url,
         )
       else
         album.update(
@@ -156,6 +159,7 @@ def create_or_update_metadata(metadata, track_id)
           year: metadata[:year],
           track_count: metadata[:track],
           artist: artist,
+          cover_url: url,
         )
       end
 
@@ -170,4 +174,40 @@ def create_or_update_metadata(metadata, track_id)
   end
 rescue ActiveRecord::RecordInvalid => e
   puts "Database save error: #{e.message}"
+end
+
+class MusicBrainzSearch
+  include HTTParty
+  base_uri 'https://musicbrainz.org/ws/2'
+  
+  def initialize
+    @headers = {
+      'User-Agent' => 'MyMusicApp/1.0.0 (mail@maril.blue)',
+      'Accept' => 'application/json'
+    }
+  end
+
+  def search_album(album_name, artist_name = nil)
+    query_parts = ["release-group:#{album_name}"]
+    query_parts << "artist:#{artist_name}" if artist_name
+    
+    query = URI.encode_www_form_component(query_parts.join(' AND '))
+    
+    response = self.class.get(
+      "/release-group/?query=#{query}&fmt=json",
+      headers: @headers
+    )
+    
+    return [] unless response.success?
+    
+    release_groups = response['release-groups']
+    release_groups.map do |group|
+      {
+        title: group['title'],
+        mbid: group['id'], 
+        artist: group['artist-credit']&.first&.dig('name'),
+        type: group['primary-type']
+      }
+    end
+  end
 end

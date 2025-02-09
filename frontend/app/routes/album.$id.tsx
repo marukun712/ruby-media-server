@@ -1,6 +1,5 @@
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
-
 import {
   Dialog,
   DialogContent,
@@ -12,25 +11,30 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { useState } from "react";
 import { TrackList } from "~/features/track/track";
+import { Edit, Trash2 } from "lucide-react";
+import Main from "~/components/layout/main";
 
 function AlbumHeader({ album }: { album: Album }) {
   return (
-    <>
-      <div className="flex items-center justify-center">
-        <img
-          src={
-            album.cover_url ||
-            "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj7QEZuxLo_zvFCMKLbMyH5pFU-LihRIeLXMY-QHxEMIgeNOVhvKeSMiNsIxrzNFHMsUv0nxYYl_b5RVqLtJcRgJokPMn8IVpkRDKfnrMr1dsoghyXHGXRakLCV1wX0FBGlltS5W34zMGV4/s400/no_image_square.jpg"
-          }
-          alt="thumbnail"
-          className="w-96 h-96 p-6"
-        />
-        <h1 className="text-4xl font-bold mb-2 text-center">{album.title}</h1>
+    <div className="flex items-center space-x-6 p-6">
+      <img
+        src={
+          album.cover_url ||
+          "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj7QEZuxLo_zvFCMKLbMyH5pFU-LihRIeLXMY-QHxEMIgeNOVhvKeSMiNsIxrzNFHMsUv0nxYYl_b5RVqLtJcRgJokPMn8IVpkRDKfnrMr1dsoghyXHGXRakLCV1wX0FBGlltS5W34zMGV4/s400/no_image_square.jpg"
+        }
+        alt={album.title}
+        className="w-48 h-48 shadow-lg"
+      />
+      <div>
+        <h1 className="text-4xl font-bold mb-2">{album.title}</h1>
+        <p className="text-gray-400">
+          {album.year} • {album.track_count}曲
+        </p>
+        <div className="mt-4 flex items-center space-x-4">
+          <EditAlbumForm album={album} />
+        </div>
       </div>
-      <h1 className="text-4xl font-bold mb-2 text-center">
-        {album.year},{album.track_count}曲
-      </h1>
-    </>
+    </div>
   );
 }
 
@@ -43,11 +47,13 @@ function EditAlbumForm({ album }: { album: Album }) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="mx-auto block">Edit Album</Button>
+        <Button variant="outline">
+          <Edit className="mr-2 h-4 w-4" /> 編集
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Edit Album</DialogTitle>
+          <DialogTitle>アルバムを編集</DialogTitle>
         </DialogHeader>
         <Form
           method="post"
@@ -56,21 +62,27 @@ function EditAlbumForm({ album }: { album: Album }) {
           action={`/api/album/edit/${album.id}`}
         >
           <div>
-            <label htmlFor="title" className="block text-sm font-medium">
-              Album Title
+            <label
+              htmlFor="title"
+              className="block text-sm font-medium text-gray-300"
+            >
+              アルバムタイトル
             </label>
             <Input
               id="title"
               name="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Enter album title"
+              placeholder="アルバムタイトルを入力"
               required
             />
           </div>
           <div>
-            <label htmlFor="year" className="block text-sm font-medium">
-              Release Year
+            <label
+              htmlFor="year"
+              className="block text-sm font-medium text-gray-300"
+            >
+              リリース年
             </label>
             <Input
               id="year"
@@ -78,24 +90,30 @@ function EditAlbumForm({ album }: { album: Album }) {
               type="number"
               value={year}
               onChange={(e) => setYear(e.target.value)}
-              placeholder="Enter release year"
+              placeholder="リリース年を入力"
             />
           </div>
           <div>
-            <label htmlFor="cover_url" className="block text-sm font-medium">
-              Cover URL
+            <label
+              htmlFor="cover_url"
+              className="block text-sm font-medium text-gray-300"
+            >
+              カバー画像URL
             </label>
             <Input
               id="cover_url"
               name="cover_url"
               value={coverUrl}
               onChange={(e) => setCoverUrl(e.target.value)}
-              placeholder="Enter cover image URL"
+              placeholder="カバー画像URLを入力"
             />
           </div>
           <div>
-            <label htmlFor="track_count" className="block text-sm font-medium">
-              Track Count
+            <label
+              htmlFor="track_count"
+              className="block text-sm font-medium text-gray-300"
+            >
+              トラック数
             </label>
             <Input
               id="track_count"
@@ -103,16 +121,21 @@ function EditAlbumForm({ album }: { album: Album }) {
               type="number"
               value={trackCount}
               onChange={(e) => setTrackCount(e.target.value)}
-              placeholder="Enter track count"
+              placeholder="トラック数を入力"
             />
           </div>
           <div className="flex justify-end space-x-2">
-            <Button type="submit">Save</Button>
+            <Button type="submit" className="bg-green-500 hover:bg-green-600">
+              保存
+            </Button>
           </div>
         </Form>
         <Form method="post" action={`/api/album/delete/${album.id}`}>
-          <Button className="bg-red-500 text-white" type="submit">
-            アルバムを削除
+          <Button
+            className="bg-red-500 hover:bg-red-600 text-white mt-4"
+            type="submit"
+          >
+            <Trash2 className="mr-2 h-4 w-4" /> アルバムを削除
           </Button>
         </Form>
       </DialogContent>
@@ -122,7 +145,7 @@ function EditAlbumForm({ album }: { album: Album }) {
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const { id } = params;
-  const res = await fetch(`http://localhost:4567/album/${id}`);
+  const res = await fetch(`http://backend:4567/album/${id}`);
   const json = await res.json();
   return { json };
 }
@@ -131,10 +154,11 @@ export default function Album() {
   const { json: album } = useLoaderData<{ json: Album }>();
 
   return (
-    <div>
+    <Main>
       <AlbumHeader album={album} />
-      <TrackList tracks={album.tracks} />
-      <EditAlbumForm album={album} />
-    </div>
+      <div className="p-6">
+        <TrackList tracks={album.tracks} image={album.cover_url!} />
+      </div>
+    </Main>
   );
 }

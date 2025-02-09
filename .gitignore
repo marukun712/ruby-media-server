@@ -4,3 +4,5 @@ media/
 db/library.db
 db/library.db-shm
 db/library.db-wal
+
+./tmp

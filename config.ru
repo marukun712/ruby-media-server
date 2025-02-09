@@ -1,5 +1,15 @@
 require "sinatra"
 require "./app"
+require 'rack/cors'
+use Rack::Cors do
+  allow do
+    origins '*'
+    resource '*',
+      headers: :any,
+      methods: [:get, :post, :put, :delete, :options]
+  end
+end
+
 
 set :port, 4567
 

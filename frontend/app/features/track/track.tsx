@@ -19,23 +19,43 @@ import {
 import { Ellipsis } from "lucide-react";
 import { Form } from "@remix-run/react";
 
-export function TrackList({ tracks }: { tracks: Track[] }) {
+export function TrackList({
+  tracks,
+  image,
+}: {
+  tracks: Track[];
+  image: string;
+}) {
   return (
-    <div className="w-1/2 mx-auto space-y-6 my-12">
+    <div className="md:w-1/2 md:mx-auto space-y-6 my-12">
       {tracks.map((track: Track, index: number) => (
-        <TrackCard key={track.id} track={track} index={index + 1} />
+        <TrackCard
+          key={track.id}
+          track={track}
+          index={index + 1}
+          image={image}
+        />
       ))}
     </div>
   );
 }
 
-export function TrackCard({ track, index }: { track: Track; index: number }) {
+export function TrackCard({
+  track,
+  index,
+  image,
+}: {
+  track: Track;
+  index: number;
+  image: string;
+}) {
   return (
     <Card className="border-gray-700">
       <CardHeader>
         <CardTitle className="text-2xl flex justify-between items-center w-full">
           <div>
-            {index}.<PlayButton title={track.title} id={track.id} />
+            {index}.
+            <PlayButton title={track.title} id={track.id} image={image} />
           </div>
           <TrackActions track={track} />
         </CardTitle>

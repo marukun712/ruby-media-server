@@ -37,9 +37,11 @@ GEM
       ruby2_keywords (~> 0.0.1)
     mutex_m (0.3.0)
     nio4r (2.7.4)
-    puma (6.5.0)
+    puma (6.6.0)
       nio4r (~> 2.0)
     rack (2.2.10)
+    rack-cors (2.0.2)
+      rack (>= 2.0.0)
     rack-protection (3.2.0)
       base64 (>= 0.1.0)
       rack (~> 2.2, >= 2.2.4)
@@ -80,6 +82,7 @@ DEPENDENCIES
   activerecord
   httparty
   puma
+  rack-cors
   rackup
   rake
   securerandom (~> 0.2.0)
