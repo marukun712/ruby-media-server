@@ -38,7 +38,7 @@ export default function Main({ children }: { children: React.ReactNode }) {
               <Label htmlFor="file" className="text-sm text-gray-400">
                 ファイルをアップロード
               </Label>
-              <Input id="file" type="file" name="file" />
+              <Input id="file" type="file" name="file" accept="audio/*" />
             </div>
             <Button
               type="submit"

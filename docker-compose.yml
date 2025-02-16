@@ -4,6 +4,8 @@ services:
       context: ./
     ports:
       - 4567:4567
+    volumes:
+      - ./:/app
     networks:
       - app_network
   frontend:
