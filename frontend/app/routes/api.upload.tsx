@@ -6,7 +6,7 @@ export const action: ActionFunction = async ({ request }) => {
   const file = formData.get("file") as File;
   const data = new FormData();
 
-  if (file.type !== "audio/*") {
+  if (!file || !file.type.startsWith("audio/")) {
     return redirect("/");
   }
 
