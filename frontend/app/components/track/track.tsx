@@ -27,7 +27,7 @@ export function TrackList({
   image: string;
 }) {
   return (
-    <div className="md:space-y-6 md:my-12">
+    <div className="space-y-6 md:my-12">
       {tracks.map((track: Track, index: number) => (
         <TrackCard
           key={track.id}
