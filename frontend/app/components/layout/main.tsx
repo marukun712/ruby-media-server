@@ -43,6 +43,7 @@ export default function Main({ children }: { children: React.ReactNode }) {
             <Button
               type="submit"
               className="w-full bg-green-500 hover:bg-green-600"
+              disabled={isLoading}
             >
               {isLoading ? (
                 <>
