@@ -2,8 +2,6 @@ services:
   backend:
     build:
       context: ./
-    volumes:
-      - ./:/app
     ports:
       - 4567:4567
     networks:

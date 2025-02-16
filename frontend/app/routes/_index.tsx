@@ -4,7 +4,7 @@ import Main from "~/components/layout/main";
 import { Card, CardContent } from "~/components/ui/card";
 
 export const meta: MetaFunction = () => {
-  return [{ title: "Media Server" }];
+  return [{ title: "Starlight" }];
 };
 
 export async function loader() {

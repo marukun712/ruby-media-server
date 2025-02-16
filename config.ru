@@ -1,6 +1,8 @@
 require "sinatra"
 require "./app"
 require 'rack/cors'
+
+#CORS設定
 use Rack::Cors do
   allow do
     origins '*'
@@ -9,7 +11,6 @@ use Rack::Cors do
       methods: [:get, :post, :put, :delete, :options]
   end
 end
-
 
 set :port, 4567
 

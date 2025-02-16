@@ -1,4 +1,4 @@
-# ruby-media-server
+# Starlight
 
 Sinatra と Remix で動作するメディアストリーミングサーバーです。
 iTunes で取り込んだ.m4a 形式の音声ファイルのみ動作確認しています。
@@ -13,7 +13,9 @@ iTunes で取り込んだ.m4a 形式の音声ファイルのみ動作確認し�
 docker-compose で起動します。
 
 ```
-docker-compose up
+docker-compose up -d
 ```
 
-起動後、http://localhost:5173 で管理画面にアクセスできます。
+起動後、http://localhost:3000 で管理画面にアクセスできます。
+
+hls 用のストリーミングファイルは、./media/music/ に保存されます。

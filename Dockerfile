@@ -12,4 +12,4 @@ COPY . .
 
 EXPOSE 4567
 
-CMD ["bundle", "exec", "rackup", "--host", "0.0.0.0", "--port", "4567"]
+CMD rake db:migrate;bundle exec rackup --host 0.0.0.0 --port 4567

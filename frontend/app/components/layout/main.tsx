@@ -1,18 +1,22 @@
-import { Form } from "@remix-run/react";
-import { Home, Upload } from "lucide-react";
+import { Form, useNavigation } from "@remix-run/react";
+import { Home, Loader2, Upload } from "lucide-react";
 import React from "react";
 import { Label } from "../ui/label";
 import { Button } from "../ui/button";
-import Player from "~/features/player/player";
+import Player from "~/components/player/player";
 import { Input } from "../ui/input";
 
 export default function Main({ children }: { children: React.ReactNode }) {
+  const navigation = useNavigation();
+  const isLoading = navigation.state === "submitting";
+
   return (
     <div className="flex h-screen">
-      <div className="w-64 p-6 flex flex-col">
+      <div className="w-64 p-6 flex-col hidden md:flex">
         <a href="/" className="mb-8">
-          <h1 className="text-2xl font-bold">Media Server</h1>
+          <h1 className="text-2xl font-bold">Starlight</h1>
         </a>
+
         <nav className="space-y-4">
           <a
             href="/"
@@ -22,6 +26,7 @@ export default function Main({ children }: { children: React.ReactNode }) {
             <span>ホーム</span>
           </a>
         </nav>
+
         <div className="mt-auto">
           <Form
             action="/api/upload"
@@ -39,7 +44,17 @@ export default function Main({ children }: { children: React.ReactNode }) {
               type="submit"
               className="w-full bg-green-500 hover:bg-green-600"
             >
-              <Upload className="mr-2 h-4 w-4" /> アップロード
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin inline" />
+                  アップロード中...
+                </>
+              ) : (
+                <>
+                  <Upload className="mr-2 h-4 w-4 inline" />
+                  アップロード
+                </>
+              )}
             </Button>
           </Form>
         </div>
@@ -47,7 +62,7 @@ export default function Main({ children }: { children: React.ReactNode }) {
 
       <div className="flex-1 md:p-12">{children}</div>
 
-      <div className="fixed bottom-0 left-0 right-0 ">
+      <div className="fixed bottom-0 left-0 right-0 z-50">
         <Player />
       </div>
     </div>

@@ -8,6 +8,7 @@ require "httparty"
 require "json"
 require "uri"
 
+#デフォルトのメディアパス
 MEDIA_DIR = "./media/music"
 
 post "/upload" do
@@ -22,15 +23,19 @@ post "/upload" do
   upload_dir = File.join(MEDIA_DIR, upload_id)
   FileUtils.mkdir_p(upload_dir)
 
+  #ファイルを保存
   original_path = File.join(upload_dir, original_filename)
   File.open(original_path, "wb") do |f|
     f.write(file.read)
   end
 
+  #メタデータの抽出
   metadata = extract_metadata(original_path, upload_id)
 
+  #DBに登録
   create_or_update_metadata(metadata, upload_id)
 
+  #ストリーミング形式への変換
   convert_to_hls(original_path, upload_id)
 
   content_type :json
@@ -86,6 +91,7 @@ post "/album/edit/:id" do
   album.to_json
 end
 
+#音声ファイルのタグ情報を取得
 def extract_metadata(file_path, upload_id)
   metadata = {}
   TagLib::FileRef.open(file_path) do |fileref|
@@ -111,6 +117,7 @@ rescue => e
   {}
 end
 
+#ffmpegでhls形式に変換
 def convert_to_hls(file_path, upload_id)
   output_path = File.join(MEDIA_DIR, upload_id, "playlist.m3u8")
 
@@ -122,6 +129,7 @@ rescue => e
   puts "HLS conversion error: #{e.message}"
 end
 
+#メタデータのDBへの保存処理
 def create_or_update_metadata(metadata, track_id)
   begin
     ActiveRecord::Base.transaction do
@@ -176,6 +184,7 @@ rescue ActiveRecord::RecordInvalid => e
   puts "Database save error: #{e.message}"
 end
 
+#カバーアートの取得
 class MusicBrainzSearch
   include HTTParty
   base_uri 'https://musicbrainz.org/ws/2'
